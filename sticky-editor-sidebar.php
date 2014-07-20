@@ -52,7 +52,7 @@ class Sticky_Editor_Sidebar
     private function __construct() {
         add_action          (   'plugins_loaded',                       array(  $this,  'textdomain'             )           );
         add_filter          (   'admin_body_class',                     array(  $this,  'sticky_body_class'      )           );
-        add_action          (   'admin_enqueue_scripts',                array(  $this,  'scripts_styles'         ),  10      );
+        add_action          (   'admin_enqueue_scripts',                array(  $this,  'sticky_admin_js'        ),  10      );
     }
 
     /**
@@ -93,7 +93,7 @@ class Sticky_Editor_Sidebar
         }
 
         // get our post types
-        $types = $this->types();
+        $types  = $this->types();
 
         // bail without types
         if ( ! $types ) {
@@ -118,15 +118,13 @@ class Sticky_Editor_Sidebar
     }
 
     /**
-     * Load CSS and JS files
-     *
-     * @return
+     * [sticky_admin_js description]
+     * @return [type] [description]
      */
-
-    public function scripts_styles( $hook ) {
+    public function sticky_admin_js() {
 
         // get our post types
-        $types = $this->types();
+        $types  = $this->types();
 
         // bail without types
         if ( ! $types ) {
@@ -144,7 +142,9 @@ class Sticky_Editor_Sidebar
         // JS
         wp_enqueue_script( 'ses-admin', plugins_url( '/lib/js/ses-admin.js', __FILE__ ), array( 'jquery' ), STICKY_SIDE_VER, true );
         wp_localize_script( 'ses-admin', 'sesOptions', array(
-            'opacity'   => apply_filters( 'sticky_side_opacity', 0.35 ),
+            'stickybox'     => apply_filters( 'sticky_side_stickybox', 'div#submitdiv' ),
+            'opacity'       => apply_filters( 'sticky_side_opacity', 0.35 ),
+            'breakpoint'    => apply_filters( 'sticky_side_breakpoint', 850 ),
         ));
     }
 
@@ -156,7 +156,10 @@ class Sticky_Editor_Sidebar
      * @return [type] [description]
      */
     public function types() {
+
+        // return our filtered set of allowed post types
         return apply_filters( 'sticky_side_allowed_types', array( 'post', 'page' ) );
+
     }
 
 /// end class
